@@ -1,2 +1,6 @@
-flask
+Flask
 gunicorn
+pyodbc
+Werkzeug
+python-dotenv
+flask-cors
