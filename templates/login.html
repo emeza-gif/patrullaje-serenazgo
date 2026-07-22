@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso - Sistema de Patrullaje</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --azul: #0a2540; --amarillo: #d4af37; --blanco: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: #e0e6ed; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        
+        .container { display: flex; width: 950px; background: white; border-radius: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); overflow: hidden; }
+        
+        /* Panel Izquierdo */
+        .left-panel { background: var(--azul); color: white; width: 40%; padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+        .logo { width: 180px; margin: 0 auto 20px; display: block; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); }
+        .left-panel h3 { color: var(--amarillo); margin: 20px 0; font-size: 14px; }
+        .feature-item { display: flex; align-items: center; gap: 15px; margin: 15px 0; font-size: 13px; }
+        
+        /* Panel Derecho */
+        .right-panel { width: 60%; padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+        .app-code { align-self: flex-end; background: var(--azul); color: white; padding: 6px 15px; border-radius: 20px; font-size: 11px; margin-bottom: 20px; }
+        
+        .input-group { position: relative; margin-bottom: 15px; }
+        .input-group i { position: absolute; left: 15px; top: 15px; color: #666; }
+        input { width: 100%; padding: 12px 12px 12px 40px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        
+        button { width: 100%; padding: 12px; background: var(--azul); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        
+        /* Footer de Valores */
+        .values-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 30px; text-align: center; }
+        .value-box { font-size: 10px; color: #555; }
+        
+        @media (max-width: 768px) { .container { flex-direction: column; width: 95%; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="left-panel">
+        <img src="{{ url_for('static', filename='logo_serenazgo.jpg') }}" class="logo">
+        <p style="text-align: center; font-size: 14px;">Seguridad ciudadana al servicio de nuestro Distrito</p>
+        <div class="feature-item"><i class="fas fa-shield-alt" style="color:var(--amarillo)"></i> <div><strong>Gestión segura</strong><br>Acceso autorizado</div></div>
+        <div class="feature-item"><i class="fas fa-clock" style="color:var(--amarillo)"></i> <div><strong>En tiempo real</strong><br>Información actualizada</div></div>
+        <div class="feature-item"><i class="fas fa-chart-line" style="color:var(--amarillo)"></i> <div><strong>Control eficiente</strong><br>Decisiones oportunas</div></div>
+    </div>
+    
+    <div class="right-panel">
+        <div class="app-code"><i class="fas fa-shield-halved"></i> CÓDIGO: MDA-APL-PP-2026</div>
+        <h2 style="text-align:center">Sistema de Patrullaje</h2>
+        <p style="text-align:center; font-size: 12px; color:#777">"Ascensión, te quiero Seguro"</p>
+        
+        <form method="POST">
+            <div class="input-group"><i class="fas fa-user"></i><input type="text" name="username" placeholder="Usuario" required></div>
+            <div class="input-group"><i class="fas fa-lock"></i><input type="password" name="password" placeholder="Contraseña" required></div>
+            <div style="text-align: right; margin-bottom: 10px;"><a href="#" style="font-size:12px; color:var(--azul)">¿Olvidaste tu contraseña?</a></div>
+            <button type="submit"><i class="fas fa-shield-check"></i> INGRESAR</button>
+        </form>
+
+        <div class="values-grid">
+            <div class="value-box"><i class="fas fa-user-shield"></i><br>Confidencialidad</div>
+            <div class="value-box"><i class="fas fa-eye"></i><br>Transparencia</div>
+            <div class="value-box"><i class="fas fa-users"></i><br>Compromiso</div>
+            <div class="value-box"><i class="fas fa-crosshairs"></i><br>Eficiencia</div>
+        </div>
+        
+        <p style="text-align: center; font-size: 10px; color: #888; margin-top: 30px;">
+            <i class="fas fa-lock"></i> Acceso restringido al personal autorizado. Todos los derechos reservados © 2026
+        </p>
+    </div>
+</div>
+
+</body>
+</html>

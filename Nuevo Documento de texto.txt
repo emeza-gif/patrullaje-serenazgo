@@ -1,0 +1,80 @@
+from flask import Flask, render_template, request, jsonify
+import pyodbc
+import datetime
+
+app = Flask(__name__)
+
+# Configuración limpia de la conexión nativa a SQL Server
+CONN_STR = (
+    "Driver={ODBC Driver 17 for SQL Server};"
+    "Server=DESKTOP-49EPOO1;"
+    "Database=SeguridadCiudadana;"
+    "Trusted_Connection=yes;"
+)
+
+def obtener_turno_automatico():
+    """Calcula el turno de forma estricta según los rangos establecidos"""
+    hora_actual = datetime.datetime.now().time()
+    
+    inicio_manana = datetime.time(6, 0, 0)
+    inicio_tarde = datetime.time(14, 0, 0)
+    inicio_noche = datetime.time(22, 0, 0)
+    
+    if inicio_manana <= hora_actual < inicio_tarde:
+        return "MAÑANA"
+    elif inicio_tarde <= hora_actual < inicio_noche:
+        return "TARDE"
+    else:
+        return "NOCHE"
+
+@app.route('/')
+def inicio():
+    # Detectar el turno al cargar el formulario
+    turno_actual = obtener_turno_automatico()
+    fecha_hora_actual = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return render_template('index.html', turno=turno_actual, fecha_hora=fecha_hora_actual)
+
+@app.route('/api/patrullaje', methods=['POST'])
+def registrar_patrullaje():
+    try:
+        data = request.json
+        turno_calculado = obtener_turno_automatico() # Recalcular al guardar para evitar manipulaciones
+        fecha_hora_servidor = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        conn = pyodbc.connect(CONN_STR)
+        cursor = conn.cursor()
+        
+        query = """
+            INSERT INTO PatrullajeAreasPriorizadas 
+            (Codigo, Fecha_Hora, Tipo_Patrullaje, Sector_SubSector, Turno, 
+             Modalidad_Patrullaje, Latitud, Longitud, Altitud, Precision_Metros, 
+             Imagen_Evidencia, Observaciones)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        
+        cursor.execute(query, (
+            data.get('Codigo', 'SC-MDA-091'),
+            fecha_hora_servidor,
+            data.get('Tipo_Patrullaje'),
+            data.get('Sector_SubSector'),
+            turno_calculado,
+            "PATRULLAJE MIXTO (SERENAZGO, JUNTAS VECINALES Y PNP)",
+            data.get('Latitud', 0.0),
+            data.get('Longitud', 0.0),
+            0.0,
+            0.0,
+            "evidencia.jpg",
+            data.get('Observaciones', '')
+        ))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({"status": "éxito", "message": f"Registro guardado en SQL Server en Turno {turno_calculado}"}), 201
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+if __name__ == '__main__':
+    # Escucha en el puerto 8080 para acceso libre en la red institucional
+    app.run(host='0.0.0.0', port=8080, debug=True)

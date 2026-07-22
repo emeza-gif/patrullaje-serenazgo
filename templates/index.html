@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patrullaje Áreas Priorizadas - SC-MDA</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; padding: 15px; margin: 0; }
+        .container { max-width: 480px; background: white; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow: hidden; }
+        .header { background-color: #1a365d; color: white; padding: 18px; text-align: center; border-bottom: 4px solid #3182ce; }
+        .header h2 { margin: 0; font-size: 16px; letter-spacing: 0.5px; }
+        .header p { margin: 4px 0 0 0; font-size: 11px; color: #90cdf4; text-transform: uppercase; }
+        .form-group { padding: 10px 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px; color: #2d3748; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 5px; box-sizing: border-box; font-size: 14px; background-color: #f8fafc; }
+        input[readonly] { background-color: #e2e8f0; color: #1a365d; font-weight: bold; cursor: not-allowed; }
+        .badge { background-color: #e2e8f0; color: #2d3748; padding: 8px 12px; border-radius: 5px; font-weight: bold; font-size: 12px; display: block; border-left: 4px solid #1a365d; }
+        .geo-badge { background-color: #e6fffa; color: #234e52; border-left: 4px solid #319795; }
+        .btn { background-color: #1a365d; color: white; border: none; width: 100%; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: background 0.2s; }
+        .btn:hover { background-color: #2b6cb0; }
+        #msg { margin: 12px 20px; padding: 12px; border-radius: 5px; font-weight: bold; text-align: center; display: none; }
+        .success { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        .error { background-color: #fed7d7; color: #742a2a; border: 1px solid #feb2b2; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>PATRULLAJE ÁREAS PRIORIZADAS</h2>
+        <p>MUNICIPALIDAD DISTRITAL DE ASCENSIÓN</p>
+    </div>
+    
+    <div id="msg"></div>
+    
+    <div class="form-group">
+        <label>Código de Registro (Generado Automático)</label>
+        <input type="text" id="codigo" value="{{ codigo_siguiente }}" readonly>
+    </div>
+    
+    <div class="form-group">
+        <label>Fecha y Hora (Servidor)</label>
+        <input type="text" id="fechahora" value="{{ fecha_hora }}" readonly>
+    </div>
+
+    <div class="form-group">
+        <label>Turno Asignado Automatizado</label>
+        <div class="badge">⏰ TURNO: {{ turno }}</div>
+    </div>
+
+    <div class="form-group">
+        <label>Ubicación GPS Actual</label>
+        <div id="geo-status" class="badge geo-badge">📍 Buscando coordenadas GPS del dispositivo...</div>
+    </div>
+
+    <div class="form-group">
+        <label>Modalidad de Patrullaje</label>
+        <select id="modalidad">
+            <option value="PATRULLAJE MUNICIPAL SERENAZGO">PATRULLAJE MUNICIPAL SERENAZGO</option>
+            <option value="PATRULLAJE INTEGRADO (SERENAZGO Y PNP)">PATRULLAJE INTEGRADO (SERENAZGO Y PNP)</option>
+            <option value="PATRULLAJE MIXTO (SERENAZGO, JUNTAS VECINALES Y PNP)">PATRULLAJE MIXTO (SERENAZGO, JUNTAS VECINALES Y PNP)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Tipo de Patrullaje</label>
+        <select id="tipo">
+            <option value="A PIE">A PIE</option>
+            <option value="MOTORIZADO">MOTORIZADO</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label>Sector / Sub Sector</label>
+        <select id="sector">
+            <optgroup label="SECTOR 01">
+                <option value="Sector 1 - Sub sector 'A' - CALLQUI GRANDE">Sector 1 - Sub sector 'A' - CALLQUI GRANDE</option>
+                <option value="Sector 1 - Sub sector 'B' - MILLPO CCACHUANA">Sector 1 - Sub sector 'B' - MILLPO CCACHUANA</option>
+                <option value="Sector 1 - Sub sector 'C' - PUCARUMI">Sector 1 - Sub sector 'C' - PUCARUMI</option>
+                <option value="Sector 1 - Sub sector 'D' - QUINTANILLA PAMPA">Sector 1 - Sub sector 'D' - QUINTANILLA PAMPA</option>
+            </optgroup>
+            <optgroup label="SECTOR 02">
+                <option value="Sector 2 - Sub sector 'A' - QUINTA BOLIVIANA">Sector 2 - Sub sector 'A' - QUINTA BOLIVIANA</option>
+                <option value="Sector 2 - Sub sector 'B' - CHUNCUYMARCA">Sector 2 - Sub sector 'B' - CHUNCUYMARCA</option>
+                <option value="Sector 2 - Sub sector 'C' - SEÑOR DE ASCENSION">Sector 2 - Sub sector 'C' - SEÑOR DE ASCENSION</option>
+                <option value="Sector 2 - Sub sector 'D' - SAN JUAN EVANGELISTA">Sector 2 - Sub sector 'D' - SAN JUAN EVANGELISTA</option>
+GERONIMO</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Imagen de Evidencia (Foto)</label>
+        <input type="file" id="foto" accept="image/*" capture="environment">
+    </div>
+    
+    <div class="form-group">
+        <label>Observaciones / Novedades</label>
+        <textarea id="obs" rows="3" placeholder="Escriba aquí las novedades del patrullaje..."></textarea>
+    </div>
+    
+    <div class="form-group">
+        <button id="btnGuardar" class="btn" onclick="guardar()">GUARDAR REPORTE</button>
+    </div>
+</div>
+
+<script>
+    let latitudActual = 0.0;
+    let longitudActual = 0.0;
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                latitudActual = position.coords.latitude;
+                longitudActual = position.coords.longitude;
+                document.getElementById('geo-status').innerText = `✅ GPS Conectado (Lat: ${latitudActual.toFixed(4)}, Lon: ${longitudActual.toFixed(4)})`;
+            },
+            (error) => {
+                document.getElementById('geo-status').innerText = "⚠️ GPS no disponible. Se guardará en 0.0";
+                document.getElementById('geo-status').style.backgroundColor = "#fff5f5";
+                document.getElementById('geo-status').style.color = "#c53030";
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    }
+
+    function guardar() {
+        const msg = document.getElementById('msg');
+        const btn = document.getElementById('btnGuardar');
+        msg.style.display = 'none';
+        
+        // Bloqueamos el botón temporalmente para evitar el doble envío
+        btn.disabled = true;
+        btn.innerText = "PROCESANDO REPORTE...";
+        
+        const fotoInput = document.getElementById('foto');
+        let nombreFoto = "evidencia_pendiente.jpg";
+        if (fotoInput.files.length > 0) {
+            nombreFoto = fotoInput.files[0].name;
+        }
+        
+        // SE CORRIGIERON Y UNIFICARON LAS VARIABLES AQUÍ
+        const payload = {
+            Tipo_Patrullaje: document.getElementById('tipo').value,
+            Sector_SubSector: document.getElementById('sector').value,
+            Modalidad_Patrullaje: document.getElementById('modalidad').value,
+            Observaciones: document.getElementById('obs').value,
+            Latitud: latitudActual,
+            Longitud: longitudActual,
+            Imagen_Evidencia: nombreFoto
+        };
+
+        fetch('/api/patrullaje', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            msg.style.display = 'block';
+            if(data.status === 'éxito') {
+                msg.className = 'success';
+                msg.innerText = "✅ " + data.message;
+                
+                document.getElementById('codigo').value = data.nuevo_codigo;
+                document.getElementById('obs').value = '';
+                document.getElementById('foto').value = '';
+            } else {
+                msg.className = 'error';
+                msg.innerText = "❌ Error: " + data.message;
+            }
+        })
+        .catch(() => {
+            msg.style.display = 'block';
+            msg.className = 'error';
+            msg.innerText = "❌ Error al conectar con el servidor central.";
+        })
+        .finally(() => {
+            // Desbloqueamos el botón al terminar
+            btn.disabled = false;
+            btn.innerText = "GUARDAR REPORTE";
+        });
+    }
+</script>
+</body>
+</html>
