@@ -1,7 +1,0 @@
-update = true
-packages = [
-  "unixodbc",
-  "unixodbc-dev",
-  "odbcinst",
-  "gnupg2"
-]
